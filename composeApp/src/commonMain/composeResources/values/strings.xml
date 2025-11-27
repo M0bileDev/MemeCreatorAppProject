@@ -20,4 +20,5 @@
     <string name="delete_meme_title">Delete meme?</string>
     <string name="delete_meme_message">Are you sure you want to delete this precious meme?</string>
     <string name="delete_meme_success">Meme successfully deleted!</string>
+    <string name="hint_gallery_item_x">Gallery item %1$s</string>
 </resources>
