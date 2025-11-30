@@ -4,8 +4,10 @@ import memecreatorappproject.composeapp.generated.resources.Res
 import memecreatorappproject.composeapp.generated.resources.allDrawableResources
 import org.jetbrains.compose.resources.DrawableResource
 
+typealias TemplateId = String
+
 data class MemeTemplate(
-    val id: String,
+    val id: TemplateId,
     val drawable: DrawableResource,
 )
 
