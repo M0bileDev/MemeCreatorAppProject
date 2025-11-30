@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import com.example.memecreatorappproject.core.presentation.MemeTemplate
 
-interface MemeEditorAction {
+sealed interface MemeEditorAction {
     data object OnGoBackClick : MemeEditorAction
 
     data object OnConfirmAbortWithoutSave : MemeEditorAction
