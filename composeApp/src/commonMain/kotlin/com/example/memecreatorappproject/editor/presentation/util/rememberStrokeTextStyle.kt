@@ -35,6 +35,7 @@ fun rememberStrokeTextStyle(
                     miter = 10f,
                     join = StrokeJoin.Round,
                 ),
+            fontFamily = fontFamily
         )
     }
 }

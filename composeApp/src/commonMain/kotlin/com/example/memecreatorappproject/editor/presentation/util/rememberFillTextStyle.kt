@@ -22,5 +22,6 @@ fun rememberFillTextStyle(
             color = fillColor,
             textAlign = textAlign,
             fontSize = fontSize,
+            fontFamily = fontFamily
         )
     }
