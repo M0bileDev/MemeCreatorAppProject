@@ -14,8 +14,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun OutlinedImpactText(
     modifier: Modifier = Modifier,
     text: String,
-    strokeTextStyle: TextStyle,
-    fillTextStyle: TextStyle,
+    strokeTextStyle: TextStyle = rememberStrokeTextStyle(),
+    fillTextStyle: TextStyle = rememberFillTextStyle(),
 ) {
     Box(
         modifier = modifier,
