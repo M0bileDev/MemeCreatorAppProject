@@ -22,3 +22,5 @@ sealed interface TextBoxInteractionState {
         val textBoxId: TextBoxId,
     ) : TextBoxInteractionState
 }
+
+fun TextBoxInteractionState.isFocused() = this != TextBoxInteractionState.None
