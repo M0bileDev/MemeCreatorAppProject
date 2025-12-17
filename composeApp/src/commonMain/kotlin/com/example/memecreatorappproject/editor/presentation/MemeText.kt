@@ -10,5 +10,5 @@ data class MemeText(
     val offsetRatioX: Float = 0f,
     val offsetRatioY: Float = 0f,
     val rotation: Float = 0f,
-    val scale: Float = 2f,
+    val scale: Float = 1f,
 )
