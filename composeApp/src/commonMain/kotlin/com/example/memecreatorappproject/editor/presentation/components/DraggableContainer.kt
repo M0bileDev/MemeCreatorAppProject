@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalDensity
 import com.example.memecreatorappproject.editor.presentation.MemeText
 import com.example.memecreatorappproject.editor.presentation.TextBoxId
 import com.example.memecreatorappproject.editor.presentation.TextBoxInteractionState
-import com.example.memecreatorappproject.editor.presentation.TextId
 
 private const val MIN_SCALE = 0.5f
 private const val MAX_SCALE = 2f
@@ -27,11 +26,11 @@ fun DraggableContainer(
     modifier: Modifier = Modifier,
     subComponents: List<MemeText>,
     textBoxInteractionState: TextBoxInteractionState,
-    onSubComponentTransformChange: (textId: TextId, offset: Offset, rotation: Float, scale: Float) -> Unit,
-    onSubComponentClick: (TextId) -> Unit,
-    onSubComponentDoubleClick: (TextId) -> Unit,
+    onSubComponentTransformChange: (textId: TextBoxId, offset: Offset, rotation: Float, scale: Float) -> Unit,
+    onSubComponentClick: (TextBoxId) -> Unit,
+    onSubComponentDoubleClick: (TextBoxId) -> Unit,
     onSubComponentTextChange: (textBoxId: TextBoxId, text: String) -> Unit,
-    onSubComponentDeleteClick: (TextId) -> Unit,
+    onSubComponentDeleteClick: (TextBoxId) -> Unit,
 ) {
     val density = LocalDensity.current
 
