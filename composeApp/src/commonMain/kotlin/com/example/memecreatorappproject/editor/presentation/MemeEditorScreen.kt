@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.memecreatorappproject.core.presentation.MemeTemplate
 import com.example.memecreatorappproject.core.theme.MemeCreatorTheme
+import com.example.memecreatorappproject.editor.presentation.components.BottomBar
 import com.example.memecreatorappproject.editor.presentation.components.DraggableContainer
 import memecreatorappproject.composeapp.generated.resources.Res
 import memecreatorappproject.composeapp.generated.resources.meme_template_01
@@ -53,10 +54,20 @@ fun MemeEditorScreen(
                 }
             },
         bottomBar = {
-            // TODO: not implemented yet
+            BottomBar(
+                onSaveClick = { onAction(MemeEditorAction.OnSaveMemeConfirm(memeTemplate)) },
+                onAddTextClick = {
+                    onAction(
+                        MemeEditorAction.OnAddTextClick,
+                    )
+                },
+            )
         },
     ) { innerPadding ->
-        Box(modifier = modifier.padding(innerPadding).fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = modifier.padding(innerPadding).fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
             Box {
                 Image(
                     modifier =
