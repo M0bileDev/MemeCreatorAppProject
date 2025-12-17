@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package com.example.memecreatorappproject.editor.presentation
 
 import androidx.compose.ui.geometry.Offset
@@ -6,6 +8,10 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
+private const val CONTAINER_PADDING = 0.25f
 
 class MemeEditorViewModel : ViewModel() {
     private val _state: MutableStateFlow<MemeEditorState> = MutableStateFlow(MemeEditorState())
@@ -14,7 +20,7 @@ class MemeEditorViewModel : ViewModel() {
     fun onAction(action: MemeEditorAction) {
         when (action) {
             MemeEditorAction.OnAddTextClick -> {
-                TODO()
+                addText()
             }
 
             MemeEditorAction.OnConfirmAbortWithoutSave -> {
@@ -60,6 +66,23 @@ class MemeEditorViewModel : ViewModel() {
             MemeEditorAction.OnTapOutsideSelectedText -> {
                 TODO()
             }
+        }
+    }
+
+    private fun addText() {
+        val id = Uuid.random().toString()
+        val memeText =
+            MemeText(
+                id = id,
+                text = "tap to edit".uppercase(),
+                offsetRatioX = CONTAINER_PADDING,
+                offsetRatioY = CONTAINER_PADDING,
+            )
+        _state.update {
+            it.copy(
+                memeTexts = it.memeTexts + memeText,
+                textBoxInteractionState = TextBoxInteractionState.Selected(id),
+            )
         }
     }
 
