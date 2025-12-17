@@ -34,7 +34,7 @@ fun DraggableContainer(
 ) {
     val density = LocalDensity.current
 
-    BoxWithConstraints {
+    BoxWithConstraints(modifier) {
         val containerWidth = constraints.maxWidth
         val containerHeight = constraints.maxHeight
 
