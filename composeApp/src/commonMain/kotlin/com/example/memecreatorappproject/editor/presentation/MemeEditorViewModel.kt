@@ -1,6 +1,7 @@
 package com.example.memecreatorappproject.editor.presentation
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,7 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             is MemeEditorAction.OnContainerSizeChange -> {
-                TODO()
+                updateContainerSize(action.size)
             }
 
             is MemeEditorAction.OnDeleteMemeTextClick -> {
@@ -59,6 +60,14 @@ class MemeEditorViewModel : ViewModel() {
             MemeEditorAction.OnTapOutsideSelectedText -> {
                 TODO()
             }
+        }
+    }
+
+    private fun updateContainerSize(size: IntSize) {
+        _state.update {
+            it.copy(
+                templateSize = size,
+            )
         }
     }
 
