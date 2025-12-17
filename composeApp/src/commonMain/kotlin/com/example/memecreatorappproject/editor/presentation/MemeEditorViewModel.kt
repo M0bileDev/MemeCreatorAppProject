@@ -64,8 +64,16 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             MemeEditorAction.OnTapOutsideSelectedText -> {
-                TODO()
+                unselectMemeText()
             }
+        }
+    }
+
+    private fun unselectMemeText() {
+        _state.update {
+            it.copy(
+                textBoxInteractionState = TextBoxInteractionState.None,
+            )
         }
     }
 
