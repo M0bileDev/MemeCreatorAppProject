@@ -108,7 +108,24 @@ class MemeEditorViewModel : ViewModel() {
         scale: Float,
         rotation: Float,
     ) {
-        // TODO: not implemented yet
+        _state.update {
+            val (width, height) = it.templateSize
+            it.copy(
+                memeTexts =
+                    it.memeTexts.map { memeText ->
+                        if (memeText.id == textBoxId) {
+                            memeText.copy(
+                                offsetRatioX = offset.x * width,
+                                offsetRatioY = offset.y * height,
+                                scale = scale,
+                                rotation = rotation,
+                            )
+                        } else {
+                            memeText
+                        }
+                    },
+            )
+        }
     }
 
     private fun deleteMemeText(textBoxId: TextBoxId) {
