@@ -115,8 +115,8 @@ class MemeEditorViewModel : ViewModel() {
                     it.memeTexts.map { memeText ->
                         if (memeText.id == textBoxId) {
                             memeText.copy(
-                                offsetRatioX = offset.x * width,
-                                offsetRatioY = offset.y * height,
+                                offsetRatioX = offset.x / width,
+                                offsetRatioY = offset.y / height,
                                 scale = scale,
                                 rotation = rotation,
                             )
