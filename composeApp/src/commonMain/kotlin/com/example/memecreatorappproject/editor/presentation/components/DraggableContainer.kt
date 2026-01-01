@@ -18,6 +18,7 @@ import com.example.memecreatorappproject.editor.presentation.MemeText
 import com.example.memecreatorappproject.editor.presentation.TextBoxId
 import com.example.memecreatorappproject.editor.presentation.TextBoxInteractionState
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -55,12 +56,6 @@ fun DraggableContainer(
 
             val transformableState =
                 rememberTransformableState { zoomChange, panChange, rotationChange ->
-                    val newScale = (component.scale * zoomChange).coerceIn(MIN_SCALE, MAX_SCALE)
-                    val newOffset =
-                        Offset(
-                            x = component.offsetRatioX * containerWidth + panChange.x,
-                            y = component.offsetRatioY * containerHeight + panChange.y,
-                        )
 
                     val newRotation = component.rotation + rotationChange
                     // rotate the translation of the pan change in order to move into right direction
@@ -83,9 +78,43 @@ fun DraggableContainer(
                     //  |           * <-                |           * <-
                     //  ----bottom---                   |--left-----|
                     //
-                    // asas
+                    //
                     val rotatedPanX = panChange.x * cos - panChange.y * sin
                     val rotatedPanY = panChange.x * sin - panChange.y * cos
+
+                    val newScale = (component.scale * zoomChange).coerceIn(MIN_SCALE, MAX_SCALE)
+                    // Constraint text inside main container
+
+                    val scaledWidth = componentWidth * component.scale
+                    val scaledHeight = componentHeight * component.scale
+
+//                    Constraint meme text inside invisible bounding box
+//
+//                   | -------------------------------------|
+//                   |      /=====================/         | <- invisible box
+//                   |     /    text rotated     /          |
+//                   |    /         by          /           |
+//                   |   /      45 degrees     / <- visible box
+//                   |  /                     /             |
+//                   | /=====================/              |
+//                   | -------------------------------------|
+//
+                    // projects rectangle edges on x and y axis
+                    val visualWidth = abs(scaledWidth * cos) + abs(scaledHeight * sin)
+                    val visualHeight = abs(scaledWidth * sin) + abs(scaledHeight * cos)
+
+                    // Visible edges of the meme text
+                    val scaleOffsetX = (scaledWidth - componentWidth) / 2
+                    val scaleOffsetY = (scaledHeight - componentHeight) / 2
+
+                    val rotationOffsetX = (visualWidth - scaledWidth) / 2
+                    val rotationOffsetY = (visualHeight - scaledHeight) / 2
+
+                    val newOffset =
+                        Offset(
+                            x = component.offsetRatioX * containerWidth + panChange.x,
+                            y = component.offsetRatioY * containerHeight + panChange.y,
+                        )
 
                     onSubComponentTransformChange(component.id, newOffset, newRotation, newScale)
                 }
