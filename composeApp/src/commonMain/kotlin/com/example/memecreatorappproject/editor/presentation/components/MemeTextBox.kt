@@ -29,7 +29,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.memecreatorappproject.editor.presentation.MemeText
 import com.example.memecreatorappproject.editor.presentation.TextBoxInteractionState
-import com.example.memecreatorappproject.editor.presentation.isFocused
+import com.example.memecreatorappproject.editor.presentation.isMemeTextEditing
+import com.example.memecreatorappproject.editor.presentation.isMemeTextSelected
 import kotlinx.coroutines.delay
 
 private const val KEYBOARD_DELAY = 100L
@@ -64,6 +65,8 @@ fun MemeTextBox(
         }
     }
 
+    val isMemeTextSelected = textBoxInteractionState.isMemeTextSelected(memeText)
+    val isMemeTextEditing = textBoxInteractionState.isMemeTextEditing(memeText)
     Box(modifier) {
         Box(
             modifier =
@@ -73,11 +76,11 @@ fun MemeTextBox(
                         maxHeight = maxHeight,
                     ).border(
                         width = 2.dp,
-                        color = if (textBoxInteractionState.isFocused()) Color.White else Color.Transparent,
+                        color = if (isMemeTextSelected) Color.White else Color.Transparent,
                         shape = RoundedCornerShape(4.dp),
                     ).background(
                         color =
-                            if (textBoxInteractionState is TextBoxInteractionState.Editing) {
+                            if (isMemeTextEditing) {
                                 Color.Black.copy(
                                     alpha = 0.15f,
                                 )
@@ -92,7 +95,7 @@ fun MemeTextBox(
         ) {
             val textPadding = 16.dp
             val borderPadding = textPadding / 2
-            if (textBoxInteractionState is TextBoxInteractionState.Editing) {
+            if (isMemeTextEditing) {
                 OutlinedImpactTextField(
                     modifier =
                         Modifier
@@ -110,7 +113,7 @@ fun MemeTextBox(
                 )
             }
         }
-        if (textBoxInteractionState.isFocused()) {
+        if (isMemeTextSelected) {
             val boxSize = 24.dp
             Box(
                 modifier =
