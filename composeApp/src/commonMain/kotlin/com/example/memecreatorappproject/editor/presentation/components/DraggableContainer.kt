@@ -17,9 +17,14 @@ import androidx.compose.ui.platform.LocalDensity
 import com.example.memecreatorappproject.editor.presentation.MemeText
 import com.example.memecreatorappproject.editor.presentation.TextBoxId
 import com.example.memecreatorappproject.editor.presentation.TextBoxInteractionState
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 private const val MIN_SCALE = 0.5f
 private const val MAX_SCALE = 2f
+
+private const val DEGREES_PER_PI = 180f
 
 @Composable
 fun DraggableContainer(
@@ -56,7 +61,31 @@ fun DraggableContainer(
                             x = component.offsetRatioX * containerWidth + panChange.x,
                             y = component.offsetRatioY * containerHeight + panChange.y,
                         )
+
                     val newRotation = component.rotation + rotationChange
+                    // rotate the translation of the pan change in order to move into right direction
+                    //  1. calculate rotation in angle (not in degrees but radiance)
+                    //  Radians: what sin(), cos(), atan2(), etc. use
+                    val angle = newRotation * PI.toFloat() / DEGREES_PER_PI
+                    //  2. calculate rotated pan value with cos and sin
+                    val cos = cos(angle)
+                    val sin = sin(angle)
+
+                    // Translate drag after rotation
+                    // Text rotated by 90 degrees, than text drag is translated to bottom drag
+                    //
+                    //
+                    //  before rotation                         after rotation by 90 degrees
+                    //  right drag move text                    drag to right needs still move
+                    //  to right                                the meme text to right
+                    //  -----top------                  |--right----|
+                    //  |           |                   |           |
+                    //  |           * <-                |           * <-
+                    //  ----bottom---                   |--left-----|
+                    //
+                    // asas
+                    val rotatedPanX = panChange.x * cos - panChange.y * sin
+                    val rotatedPanY = panChange.x * sin - panChange.y * cos
 
                     onSubComponentTransformChange(component.id, newOffset, newRotation, newScale)
                 }
