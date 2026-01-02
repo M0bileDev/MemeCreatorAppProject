@@ -80,7 +80,7 @@ fun DraggableContainer(
                     //
                     //
                     val rotatedPanX = panChange.x * cos - panChange.y * sin
-                    val rotatedPanY = panChange.x * sin - panChange.y * cos
+                    val rotatedPanY = panChange.x * sin + panChange.y * cos
 
                     val newScale = (component.scale * zoomChange).coerceIn(MIN_SCALE, MAX_SCALE)
                     // Constraint text inside main container
@@ -110,10 +110,35 @@ fun DraggableContainer(
                     val rotationOffsetX = (visualWidth - scaledWidth) / 2
                     val rotationOffsetY = (visualHeight - scaledHeight) / 2
 
+                    // Text is allowed to move inside min x/y, max x/y
+                    val minX = scaleOffsetX + rotationOffsetX
+                    val maxX = containerWidth - componentWidth - scaleOffsetX - rotationOffsetX
+                    val minY = scaleOffsetY + rotationOffsetY
+                    val maxY = containerHeight - componentHeight - scaleOffsetY - rotationOffsetY
+
+//                          min y
+//                             |
+//                             V
+//           min x -> x--------y--------x <- max x
+//                    |                 |
+//                    |                 |
+//                    x--------y--------x
+//                             ^
+//                             |
+//                          max y
+
                     val newOffset =
                         Offset(
-                            x = component.offsetRatioX * containerWidth + panChange.x,
-                            y = component.offsetRatioY * containerHeight + panChange.y,
+                            x =
+                                (component.offsetRatioX * containerWidth + component.scale * rotatedPanX).coerceIn(
+                                    minimumValue = minOf(minX, maxX),
+                                    maximumValue = maxOf(minX, maxX),
+                                ),
+                            y =
+                                (component.offsetRatioY * containerHeight + component.scale * rotatedPanY).coerceIn(
+                                    minimumValue = minOf(minY, maxY),
+                                    maximumValue = maxOf(minY, maxY),
+                                ),
                         )
 
                     onSubComponentTransformChange(component.id, newOffset, newRotation, newScale)
