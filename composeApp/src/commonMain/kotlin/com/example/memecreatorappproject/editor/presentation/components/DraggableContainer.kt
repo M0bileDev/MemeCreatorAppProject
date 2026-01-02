@@ -17,9 +17,15 @@ import androidx.compose.ui.platform.LocalDensity
 import com.example.memecreatorappproject.editor.presentation.MemeText
 import com.example.memecreatorappproject.editor.presentation.TextBoxId
 import com.example.memecreatorappproject.editor.presentation.TextBoxInteractionState
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 private const val MIN_SCALE = 0.5f
 private const val MAX_SCALE = 2f
+
+private const val DEGREES_PER_PI = 180f
 
 @Composable
 fun DraggableContainer(
@@ -50,13 +56,90 @@ fun DraggableContainer(
 
             val transformableState =
                 rememberTransformableState { zoomChange, panChange, rotationChange ->
+
+                    val newRotation = component.rotation + rotationChange
+                    // rotate the translation of the pan change in order to move into right direction
+                    //  1. calculate rotation in angle (not in degrees but radiance)
+                    //  Radians: what sin(), cos(), atan2(), etc. use
+                    val angle = newRotation * PI.toFloat() / DEGREES_PER_PI
+                    //  2. calculate rotated pan value with cos and sin
+                    val cos = cos(angle)
+                    val sin = sin(angle)
+
+                    // Translate drag after rotation
+                    // Text rotated by 90 degrees, than text drag is translated to bottom drag
+                    //
+                    //
+                    //  before rotation                         after rotation by 90 degrees
+                    //  right drag move text                    drag to right needs still move
+                    //  to right                                the meme text to right
+                    //  -----top------                  |--right----|
+                    //  |           |                   |           |
+                    //  |           * <-                |           * <-
+                    //  ----bottom---                   |--left-----|
+                    //
+                    //
+                    val rotatedPanX = panChange.x * cos - panChange.y * sin
+                    val rotatedPanY = panChange.x * sin + panChange.y * cos
+
                     val newScale = (component.scale * zoomChange).coerceIn(MIN_SCALE, MAX_SCALE)
+                    // Constraint text inside main container
+
+                    val scaledWidth = componentWidth * component.scale
+                    val scaledHeight = componentHeight * component.scale
+
+//                    Constraint meme text inside invisible bounding box
+//
+//                   | -------------------------------------|
+//                   |      /=====================/         | <- invisible box
+//                   |     /    text rotated     /          |
+//                   |    /         by          /           |
+//                   |   /      45 degrees     / <- visible box
+//                   |  /                     /             |
+//                   | /=====================/              |
+//                   | -------------------------------------|
+//
+                    // projects rectangle edges on x and y axis
+                    val visualWidth = abs(scaledWidth * cos) + abs(scaledHeight * sin)
+                    val visualHeight = abs(scaledWidth * sin) + abs(scaledHeight * cos)
+
+                    // Visible edges of the meme text
+                    val scaleOffsetX = (scaledWidth - componentWidth) / 2
+                    val scaleOffsetY = (scaledHeight - componentHeight) / 2
+
+                    val rotationOffsetX = (visualWidth - scaledWidth) / 2
+                    val rotationOffsetY = (visualHeight - scaledHeight) / 2
+
+                    // Text is allowed to move inside min x/y, max x/y
+                    val minX = scaleOffsetX + rotationOffsetX
+                    val maxX = containerWidth - componentWidth - scaleOffsetX - rotationOffsetX
+                    val minY = scaleOffsetY + rotationOffsetY
+                    val maxY = containerHeight - componentHeight - scaleOffsetY - rotationOffsetY
+
+//                          min y
+//                             |
+//                             V
+//           min x -> x--------y--------x <- max x
+//                    |                 |
+//                    |                 |
+//                    x--------y--------x
+//                             ^
+//                             |
+//                          max y
+
                     val newOffset =
                         Offset(
-                            x = component.offsetRatioX * containerWidth + panChange.x,
-                            y = component.offsetRatioY * containerHeight + panChange.y,
+                            x =
+                                (component.offsetRatioX * containerWidth + component.scale * rotatedPanX).coerceIn(
+                                    minimumValue = minOf(minX, maxX),
+                                    maximumValue = maxOf(minX, maxX),
+                                ),
+                            y =
+                                (component.offsetRatioY * containerHeight + component.scale * rotatedPanY).coerceIn(
+                                    minimumValue = minOf(minY, maxY),
+                                    maximumValue = maxOf(minY, maxY),
+                                ),
                         )
-                    val newRotation = component.rotation + rotationChange
 
                     onSubComponentTransformChange(component.id, newOffset, newRotation, newScale)
                 }
