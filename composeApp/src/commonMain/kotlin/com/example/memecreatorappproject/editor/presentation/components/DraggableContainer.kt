@@ -167,11 +167,11 @@ fun DraggableContainer(
                     textBoxInteractionState = textBoxInteractionState,
                     maxWidth =
                         with(density) {
-                            containerWidth.toDp()
+                            (containerWidth / component.scale).toDp()
                         },
                     maxHeight =
                         with(density) {
-                            containerHeight.toDp()
+                            (containerHeight / component.scale).toDp()
                         },
                     onClick = {
                         onSubComponentClick(component.id)
