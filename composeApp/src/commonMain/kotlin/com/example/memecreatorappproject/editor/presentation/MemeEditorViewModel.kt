@@ -36,7 +36,7 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             MemeEditorAction.OnDismissAbortWithoutSave -> {
-                TODO()
+                dismissAbortWithoutSave()
             }
 
             is MemeEditorAction.OnEditMemeText -> {
@@ -66,6 +66,14 @@ class MemeEditorViewModel : ViewModel() {
             MemeEditorAction.OnTapOutsideSelectedText -> {
                 unselectMemeText()
             }
+        }
+    }
+
+    private fun dismissAbortWithoutSave() {
+        _state.update {
+            it.copy(
+                abortWithoutSave = false,
+            )
         }
     }
 
