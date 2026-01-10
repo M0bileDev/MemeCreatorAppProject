@@ -9,6 +9,7 @@ data class MemeEditorState(
     val abortWithoutSave: Boolean = false,
     val textBoxInteractionState: TextBoxInteractionState = TextBoxInteractionState.None,
     val memeTexts: List<MemeText> = emptyList(),
+    val isEditMode: Boolean = true,
 )
 
 sealed interface TextBoxInteractionState {
