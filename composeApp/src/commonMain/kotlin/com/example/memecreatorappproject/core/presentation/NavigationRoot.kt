@@ -27,7 +27,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             val templateId = it.toRoute<Route.MemeEditor>().templateId
             val template =
                 remember(templateId) { memeTemplates.first { (id, _) -> id == templateId } }
-            MemeEditorRoot(memeTemplate = template)
+            MemeEditorRoot(memeTemplate = template, onBackClick = { navController.navigateUp() })
         }
     }
 }
