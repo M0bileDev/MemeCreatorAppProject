@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +32,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun MemeEditorRoot(
     viewModel: MemeEditorViewModel = koinViewModel(),
+    onBackClick: () -> Unit,
     memeTemplate: MemeTemplate,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -35,7 +40,12 @@ fun MemeEditorRoot(
     MemeEditorScreen(
         memeTemplate = memeTemplate,
         state = state,
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is MemeEditorAction.OnGoBackClick -> onBackClick()
+                else -> viewModel.onAction(action)
+            }
+        },
     )
 }
 
@@ -105,6 +115,12 @@ fun MemeEditorScreen(
                         )
                     },
                 )
+            }
+            IconButton(
+                modifier = Modifier.align(Alignment.TopStart),
+                onClick = { onAction(MemeEditorAction.OnGoBackClick) },
+            ) {
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowLeft, contentDescription = "Back")
             }
         }
     }

@@ -24,7 +24,7 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             MemeEditorAction.OnConfirmAbortWithoutSave -> {
-                TODO()
+                confirmLeave()
             }
 
             is MemeEditorAction.OnContainerSizeChange -> {
@@ -36,7 +36,7 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             MemeEditorAction.OnDismissAbortWithoutSave -> {
-                TODO()
+                dismissAbortWithoutSave()
             }
 
             is MemeEditorAction.OnEditMemeText -> {
@@ -44,7 +44,7 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             MemeEditorAction.OnGoBackClick -> {
-                TODO()
+                displayConfirmationDialog()
             }
 
             is MemeEditorAction.OnMemeTextChange -> {
@@ -65,6 +65,38 @@ class MemeEditorViewModel : ViewModel() {
 
             MemeEditorAction.OnTapOutsideSelectedText -> {
                 unselectMemeText()
+            }
+        }
+    }
+
+    private fun dismissAbortWithoutSave() {
+        _state.update {
+            it.copy(
+                abortWithoutSave = false,
+            )
+        }
+    }
+
+    private fun confirmLeave() {
+        _state.update {
+            it.copy(
+                isEditMode = false,
+            )
+        }
+    }
+
+    private fun displayConfirmationDialog() {
+        if (state.value.memeTexts.isEmpty()) {
+            _state.update {
+                it.copy(
+                    isEditMode = false,
+                )
+            }
+        } else {
+            _state.update {
+                it.copy(
+                    abortWithoutSave = true,
+                )
             }
         }
     }
