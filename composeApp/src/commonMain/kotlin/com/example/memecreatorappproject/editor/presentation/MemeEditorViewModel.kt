@@ -24,7 +24,7 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             MemeEditorAction.OnConfirmAbortWithoutSave -> {
-                TODO()
+                confirmLeave()
             }
 
             is MemeEditorAction.OnContainerSizeChange -> {
@@ -66,6 +66,14 @@ class MemeEditorViewModel : ViewModel() {
             MemeEditorAction.OnTapOutsideSelectedText -> {
                 unselectMemeText()
             }
+        }
+    }
+
+    private fun confirmLeave() {
+        _state.update {
+            it.copy(
+                isEditMode = false,
+            )
         }
     }
 
