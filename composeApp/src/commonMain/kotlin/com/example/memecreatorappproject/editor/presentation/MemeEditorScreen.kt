@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,20 +40,21 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun MemeEditorRoot(
     viewModel: MemeEditorViewModel = koinViewModel(),
-    onBackClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     memeTemplate: MemeTemplate,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(state.isEditMode) {
+        if (!state.isEditMode) {
+            onNavigateBack()
+        }
+    }
+
     MemeEditorScreen(
         memeTemplate = memeTemplate,
         state = state,
-        onAction = { action ->
-            when (action) {
-                is MemeEditorAction.OnGoBackClick -> onBackClick()
-                else -> viewModel.onAction(action)
-            }
-        },
+        onAction = viewModel::onAction,
     )
 }
 
