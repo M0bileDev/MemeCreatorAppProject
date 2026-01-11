@@ -30,6 +30,7 @@ import com.example.memecreatorappproject.editor.presentation.components.Draggabl
 import memecreatorappproject.composeapp.generated.resources.Res
 import memecreatorappproject.composeapp.generated.resources.cancel
 import memecreatorappproject.composeapp.generated.resources.leave
+import memecreatorappproject.composeapp.generated.resources.leave_editor_message
 import memecreatorappproject.composeapp.generated.resources.leave_editor_title
 import memecreatorappproject.composeapp.generated.resources.meme_template_01
 import org.jetbrains.compose.resources.painterResource
@@ -138,7 +139,7 @@ fun MemeEditorScreen(
             config =
                 ConfirmationDialogConfig(
                     title = stringResource(Res.string.leave_editor_title),
-                    message = stringResource(Res.string.leave_editor_title),
+                    message = stringResource(Res.string.leave_editor_message),
                     confirmButtonText = stringResource(Res.string.leave),
                     dismissButtonText = stringResource(Res.string.cancel),
                     confirmButtonColor = MaterialTheme.colorScheme.secondary,
