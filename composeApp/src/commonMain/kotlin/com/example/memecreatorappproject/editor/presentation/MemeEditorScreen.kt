@@ -16,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -59,6 +61,7 @@ fun MemeEditorRoot(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MemeEditorScreen(
     modifier: Modifier = Modifier,
@@ -66,6 +69,12 @@ fun MemeEditorScreen(
     state: MemeEditorState,
     onAction: (MemeEditorAction) -> Unit,
 ) {
+    BackHandler(
+        enabled = !state.abortWithoutSave,
+    ) {
+        onAction(MemeEditorAction.OnGoBackClick)
+    }
+
     Scaffold(
         modifier =
             modifier.fillMaxSize().pointerInput(Unit) {
