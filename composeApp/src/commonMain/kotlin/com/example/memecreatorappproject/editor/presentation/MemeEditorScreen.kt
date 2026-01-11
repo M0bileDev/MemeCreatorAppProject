@@ -10,11 +10,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -22,33 +26,42 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.memecreatorappproject.core.presentation.MemeTemplate
 import com.example.memecreatorappproject.core.theme.MemeCreatorTheme
 import com.example.memecreatorappproject.editor.presentation.components.BottomBar
+import com.example.memecreatorappproject.editor.presentation.components.ConfirmationDialog
+import com.example.memecreatorappproject.editor.presentation.components.ConfirmationDialogConfig
 import com.example.memecreatorappproject.editor.presentation.components.DraggableContainer
 import memecreatorappproject.composeapp.generated.resources.Res
+import memecreatorappproject.composeapp.generated.resources.cancel
+import memecreatorappproject.composeapp.generated.resources.leave
+import memecreatorappproject.composeapp.generated.resources.leave_editor_message
+import memecreatorappproject.composeapp.generated.resources.leave_editor_title
 import memecreatorappproject.composeapp.generated.resources.meme_template_01
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MemeEditorRoot(
     viewModel: MemeEditorViewModel = koinViewModel(),
-    onBackClick: () -> Unit,
+    onNavigateBack: () -> Unit,
     memeTemplate: MemeTemplate,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(state.isEditMode) {
+        if (!state.isEditMode) {
+            onNavigateBack()
+        }
+    }
+
     MemeEditorScreen(
         memeTemplate = memeTemplate,
         state = state,
-        onAction = { action ->
-            when (action) {
-                is MemeEditorAction.OnGoBackClick -> onBackClick()
-                else -> viewModel.onAction(action)
-            }
-        },
+        onAction = viewModel::onAction,
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MemeEditorScreen(
     modifier: Modifier = Modifier,
@@ -56,6 +69,12 @@ fun MemeEditorScreen(
     state: MemeEditorState,
     onAction: (MemeEditorAction) -> Unit,
 ) {
+    BackHandler(
+        enabled = !state.abortWithoutSave,
+    ) {
+        onAction(MemeEditorAction.OnGoBackClick)
+    }
+
     Scaffold(
         modifier =
             modifier.fillMaxSize().pointerInput(Unit) {
@@ -123,6 +142,24 @@ fun MemeEditorScreen(
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowLeft, contentDescription = "Back")
             }
         }
+    }
+    if (state.abortWithoutSave) {
+        ConfirmationDialog(
+            config =
+                ConfirmationDialogConfig(
+                    title = stringResource(Res.string.leave_editor_title),
+                    message = stringResource(Res.string.leave_editor_message),
+                    confirmButtonText = stringResource(Res.string.leave),
+                    dismissButtonText = stringResource(Res.string.cancel),
+                    confirmButtonColor = MaterialTheme.colorScheme.secondary,
+                ),
+            onConfirmAction = {
+                onAction(MemeEditorAction.OnConfirmAbortWithoutSave)
+            },
+            onDismissAction = {
+                onAction(MemeEditorAction.OnDismissAbortWithoutSave)
+            },
+        )
     }
 }
 
