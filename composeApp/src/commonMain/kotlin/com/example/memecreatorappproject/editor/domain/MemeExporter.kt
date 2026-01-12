@@ -11,6 +11,7 @@ interface MemeExporter {
         backgroundImage: ByteArray,
         memeTexts: List<MemeText>,
         templateSize: IntSize,
-        name: String = "meme_${Uuid.random()}.jpg"
+        name: String = "meme_${Uuid.random()}.jpg",
+        saveToStorageStrategy: SaveToStorageStrategy
     )
 }
