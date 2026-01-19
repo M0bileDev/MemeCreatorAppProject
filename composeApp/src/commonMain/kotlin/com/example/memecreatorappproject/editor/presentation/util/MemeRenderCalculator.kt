@@ -34,7 +34,7 @@ class MemeRenderCalculator(
         )
     }
 
-    private fun calculateScaledMemeText(
+    fun calculateScaledMemeText(
         memeText: MemeText,
         scaleFactors: ScaleFactors,
         templateSize: IntSize,
