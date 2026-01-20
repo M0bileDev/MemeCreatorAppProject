@@ -13,5 +13,5 @@ interface MemeExporter {
         templateSize: IntSize,
         name: String = "meme_${Uuid.random()}.jpg",
         saveToStorageStrategy: SaveToStorageStrategy
-    )
+    ) : Result<String>
 }

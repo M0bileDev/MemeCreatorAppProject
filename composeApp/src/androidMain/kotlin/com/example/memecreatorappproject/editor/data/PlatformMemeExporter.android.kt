@@ -19,7 +19,10 @@ import com.example.memecreatorappproject.editor.presentation.MemeText
 import com.example.memecreatorappproject.editor.presentation.util.MemeRenderCalculator
 import com.example.memecreatorappproject.editor.presentation.util.ScaledMemeText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 private const val BYTES_TO_SKIP = 0
 
@@ -37,7 +40,7 @@ actual class PlatformMemeExporter(
         templateSize: IntSize,
         name: String,
         saveToStorageStrategy: SaveToStorageStrategy
-    ) = withContext(Dispatchers.IO) {
+    ): Result<String> = withContext(Dispatchers.IO) {
         var bitmap: Bitmap? = null
         var outputBitmap: Bitmap? = null
 
@@ -47,9 +50,27 @@ actual class PlatformMemeExporter(
                 BYTES_TO_SKIP,
                 backgroundImage.size
             )
-            // TODO: further impl
-        } catch (e: Exception) {
+            //final bitmap rendered with all meme texts in the right positions, in memory representation
+            outputBitmap = renderMeme(
+                background = bitmap,
+                memeTexts = memeTexts,
+                templateSize = templateSize
+            )
 
+            val filePath = saveToStorageStrategy.getFilePath(filename = name)
+            val file = File(filePath)
+            FileOutputStream(file).use { fileOutputStream ->
+                //write real bitmap as bytes into certain stream like file output stream
+                outputBitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    90,
+                    fileOutputStream
+                )
+            }
+            Result.success(file.absolutePath)
+        } catch (e: Exception) {
+            ensureActive()
+            Result.failure(e)
         } finally {
             // Release resources
             bitmap?.recycle()
