@@ -5,15 +5,26 @@ package com.example.memecreatorappproject.editor.presentation
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.memecreatorappproject.core.presentation.MemeTemplate
+import com.example.memecreatorappproject.editor.domain.MemeExporter
+import com.example.memecreatorappproject.editor.domain.SaveToStorageStrategy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getDrawableResourceBytes
+import org.jetbrains.compose.resources.getSystemResourceEnvironment
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 private const val CONTAINER_PADDING = 0.25f
+const val TAG = "MemeEditorViewModel"
 
-class MemeEditorViewModel : ViewModel() {
+class MemeEditorViewModel(
+    private val memeExporter: MemeExporter,
+    private val storageStrategy: SaveToStorageStrategy
+) : ViewModel() {
     private val _state: MutableStateFlow<MemeEditorState> = MutableStateFlow(MemeEditorState())
     val state get() = _state.asStateFlow()
 
@@ -56,7 +67,7 @@ class MemeEditorViewModel : ViewModel() {
             }
 
             is MemeEditorAction.OnSaveMemeConfirm -> {
-                TODO()
+                saveMeme(action.memeTemplate)
             }
 
             is MemeEditorAction.OnSelectMemeText -> {
@@ -65,6 +76,25 @@ class MemeEditorViewModel : ViewModel() {
 
             MemeEditorAction.OnTapOutsideSelectedText -> {
                 unselectMemeText()
+            }
+        }
+    }
+
+    private fun saveMeme(memeTemplate: MemeTemplate) {
+        viewModelScope.launch {
+            memeExporter.exportMeme(
+                backgroundImage = getDrawableResourceBytes(
+                    environment = getSystemResourceEnvironment(),
+                    resource = memeTemplate.drawable
+                ),
+                memeTexts = state.value.memeTexts,
+                templateSize = state.value.templateSize,
+                saveToStorageStrategy = storageStrategy
+            ).onSuccess {
+                println("$TAG: saveMeme -> onSuccess")
+            }.onFailure {
+                println("$TAG: saveMeme -> onFailure")
+                it.printStackTrace()
             }
         }
     }
