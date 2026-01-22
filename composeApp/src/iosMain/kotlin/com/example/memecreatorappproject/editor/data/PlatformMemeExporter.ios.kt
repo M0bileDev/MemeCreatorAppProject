@@ -7,6 +7,7 @@ import com.example.memecreatorappproject.editor.domain.MemeExporter
 import com.example.memecreatorappproject.editor.domain.SaveToStorageStrategy
 import com.example.memecreatorappproject.editor.presentation.MemeText
 import com.example.memecreatorappproject.editor.presentation.util.MemeRenderCalculator
+import com.example.memecreatorappproject.editor.presentation.util.ScaledMemeText
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -16,10 +17,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
+import platform.CoreGraphics.CGContextRef
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
+import platform.Foundation.NSNumber
 import platform.Foundation.create
+import platform.UIKit.NSFontAttributeName
+import platform.UIKit.NSForegroundColorAttributeName
+import platform.UIKit.NSLineBreakByWordWrapping
+import platform.UIKit.NSMutableParagraphStyle
+import platform.UIKit.NSParagraphStyleAttributeName
+import platform.UIKit.NSStrokeColorAttributeName
+import platform.UIKit.NSStrokeWidthAttributeName
+import platform.UIKit.NSTextAlignmentCenter
+import platform.UIKit.UIColor
+import platform.UIKit.UIFont
 import platform.UIKit.UIGraphicsBeginImageContextWithOptions
 import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetCurrentContext
@@ -128,5 +141,34 @@ actual class PlatformMemeExporter : MemeExporter {
         UIGraphicsEndImageContext()
 
         return resultImage
+    }
+
+    private fun drawText(context: CGContextRef, scaledMemeText: ScaledMemeText) {
+        // TODO: implement 
+    }
+
+    private fun createMemeTextAttributes(
+        fontSize: Float,
+        strokeWidth: Float
+    ): Map<Any?, Any?> {
+        // "Imapct" font is supported by default by ios
+        val font =
+            UIFont.fontWithName("Impact", fontSize.toDouble())
+                ?: UIFont.boldSystemFontOfSize(
+                    fontSize.toDouble()
+                )
+
+        val paragraphStyle = NSMutableParagraphStyle().apply {
+            setAlignment(NSTextAlignmentCenter)
+            setLineBreakMode(NSLineBreakByWordWrapping)
+        }
+
+        return mapOf(
+            NSFontAttributeName to font,
+            NSForegroundColorAttributeName to UIColor.whiteColor,
+            NSStrokeColorAttributeName to UIColor.blackColor,
+            NSStrokeWidthAttributeName to NSNumber(strokeWidth),
+            NSParagraphStyleAttributeName to paragraphStyle
+        )
     }
 }
