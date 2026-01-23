@@ -30,6 +30,7 @@ import platform.Foundation.NSData
 import platform.Foundation.NSNumber
 import platform.Foundation.NSString
 import platform.Foundation.create
+import platform.Foundation.writeToFile
 import platform.UIKit.NSFontAttributeName
 import platform.UIKit.NSForegroundColorAttributeName
 import platform.UIKit.NSLineBreakByWordWrapping
@@ -45,6 +46,7 @@ import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetCurrentContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
+import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UIScreen
 import platform.UIKit.boundingRectWithSize
 import platform.UIKit.drawWithRect
@@ -78,6 +80,23 @@ actual class PlatformMemeExporter : MemeExporter {
         } catch (e: Exception) {
             coroutineContext.ensureActive()
             Result.failure(e)
+        }
+    }
+
+    private fun saveMemeToFile(
+        image: UIImage,
+        fileName: String,
+        saveToStorageStrategy: SaveToStorageStrategy
+    ): Result<String> {
+        val jpegData = UIImageJPEGRepresentation(image, 90.0)
+            ?: return Result.failure(Exception("Failed to create image"))
+        val filePath = saveToStorageStrategy.getFilePath(fileName)
+        val saved = jpegData.writeToFile(filePath, atomically = true)
+
+        return if (saved) {
+            Result.success(filePath)
+        } else {
+            Result.failure(Exception("Failed to save file"))
         }
     }
 
