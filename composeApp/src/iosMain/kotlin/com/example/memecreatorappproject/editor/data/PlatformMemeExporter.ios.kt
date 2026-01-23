@@ -66,7 +66,14 @@ actual class PlatformMemeExporter : MemeExporter {
         try {
             val backgroundImage = createBackgroundImage(
                 imageBytes = backgroundImage
-            )
+            ) ?: throw Exception("Failed to create background image")
+
+            val outputImage = renderMeme(
+                backgroundImage = backgroundImage,
+                memeTexts = memeTexts,
+                templateSize = templateSize
+            ) ?: throw Exception("Failed to create output image")
+
             Result.success("")
         } catch (e: Exception) {
             coroutineContext.ensureActive()
