@@ -76,7 +76,11 @@ actual class PlatformMemeExporter : MemeExporter {
                 templateSize = templateSize
             ) ?: throw Exception("Failed to create output image")
 
-            Result.success("")
+            saveMemeToFile(
+                image = outputImage,
+                fileName = name,
+                saveToStorageStrategy = saveToStorageStrategy
+            )
         } catch (e: Exception) {
             coroutineContext.ensureActive()
             Result.failure(e)
