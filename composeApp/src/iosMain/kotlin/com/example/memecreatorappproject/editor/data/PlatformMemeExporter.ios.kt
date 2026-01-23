@@ -141,7 +141,10 @@ actual class PlatformMemeExporter : MemeExporter {
 
         //3. draw texts on the canvas
         scaledMemeTexts.forEach { scaledMemeText ->
-            // TODO: provide draw text function
+            drawText(
+                context = context,
+                scaledMemeText = scaledMemeText
+            )
         }
 
         //4. get image after drawing
