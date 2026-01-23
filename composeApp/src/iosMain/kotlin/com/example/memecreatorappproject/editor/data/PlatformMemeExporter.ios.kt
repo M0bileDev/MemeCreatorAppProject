@@ -18,11 +18,19 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import platform.CoreGraphics.CGContextRef
+import platform.CoreGraphics.CGContextRestoreGState
+import platform.CoreGraphics.CGContextRotateCTM
+import platform.CoreGraphics.CGContextSaveGState
+import platform.CoreGraphics.CGContextScaleCTM
+import platform.CoreGraphics.CGContextTranslateCTM
+import platform.CoreGraphics.CGFloat
 import platform.CoreGraphics.CGRectMake
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.Foundation.NSNumber
+import platform.Foundation.NSString
 import platform.Foundation.create
+import platform.Foundation.writeToFile
 import platform.UIKit.NSFontAttributeName
 import platform.UIKit.NSForegroundColorAttributeName
 import platform.UIKit.NSLineBreakByWordWrapping
@@ -38,7 +46,11 @@ import platform.UIKit.UIGraphicsEndImageContext
 import platform.UIKit.UIGraphicsGetCurrentContext
 import platform.UIKit.UIGraphicsGetImageFromCurrentImageContext
 import platform.UIKit.UIImage
+import platform.UIKit.UIImageJPEGRepresentation
 import platform.UIKit.UIScreen
+import platform.UIKit.boundingRectWithSize
+import platform.UIKit.drawWithRect
+import kotlin.math.PI
 
 actual class PlatformMemeExporter : MemeExporter {
 
@@ -56,11 +68,39 @@ actual class PlatformMemeExporter : MemeExporter {
         try {
             val backgroundImage = createBackgroundImage(
                 imageBytes = backgroundImage
+            ) ?: throw Exception("Failed to create background image")
+
+            val outputImage = renderMeme(
+                backgroundImage = backgroundImage,
+                memeTexts = memeTexts,
+                templateSize = templateSize
+            ) ?: throw Exception("Failed to create output image")
+
+            saveMemeToFile(
+                image = outputImage,
+                fileName = name,
+                saveToStorageStrategy = saveToStorageStrategy
             )
-            Result.success("")
         } catch (e: Exception) {
             coroutineContext.ensureActive()
             Result.failure(e)
+        }
+    }
+
+    private fun saveMemeToFile(
+        image: UIImage,
+        fileName: String,
+        saveToStorageStrategy: SaveToStorageStrategy
+    ): Result<String> {
+        val jpegData = UIImageJPEGRepresentation(image, 90.0)
+            ?: return Result.failure(Exception("Failed to create image"))
+        val filePath = saveToStorageStrategy.getFilePath(fileName)
+        val saved = jpegData.writeToFile(filePath, atomically = true)
+
+        return if (saved) {
+            Result.success(filePath)
+        } else {
+            Result.failure(Exception("Failed to save file"))
         }
     }
 
@@ -131,7 +171,10 @@ actual class PlatformMemeExporter : MemeExporter {
 
         //3. draw texts on the canvas
         scaledMemeTexts.forEach { scaledMemeText ->
-            // TODO: provide draw text function
+            drawText(
+                context = context,
+                scaledMemeText = scaledMemeText
+            )
         }
 
         //4. get image after drawing
@@ -144,7 +187,59 @@ actual class PlatformMemeExporter : MemeExporter {
     }
 
     private fun drawText(context: CGContextRef, scaledMemeText: ScaledMemeText) {
-        // TODO: implement 
+        val textNS = NSString.create(scaledMemeText.text)
+        val attributes = createMemeTextAttributes(
+            fontSize = scaledMemeText.scaledFontSizePx,
+            strokeWidth = scaledMemeText.scaledFontSizePx
+        )
+        //rectangle that surrounds the text, in height text is not limited in any way
+        val boundingRect = textNS?.boundingRectWithSize(
+            size = CGSizeMake(scaledMemeText.constraintWidth.toDouble(), CGFloat.MAX_VALUE),
+            options = 1L shl 0,
+            attributes = attributes,
+            context = null
+        ) ?: return
+
+        val textHeight = boundingRect.useContents { size.height.toFloat() }
+        val textWidth = boundingRect.useContents { size.width.toFloat() }
+
+        val boxWidth = textWidth + scaledMemeText.textPaddingX * 2
+        val boxHeight = textHeight + scaledMemeText.textPaddingY * 2
+
+        val centerX = scaledMemeText.scaledOffset.x + boxWidth / 2
+        val centerY = scaledMemeText.scaledOffset.y + boxHeight / 2
+
+        //initiate transform operation, context -> canvas context
+        CGContextSaveGState(context)
+
+        //scaled around the pivot of the text
+        CGContextTranslateCTM(context, centerX.toDouble(), centerY.toDouble())
+        //scaled
+        CGContextScaleCTM(context, scaledMemeText.scale.toDouble(), scaledMemeText.scale.toDouble())
+        CGContextRotateCTM(context, scaledMemeText.rotation * PI / 180.0)
+
+        val textCenteringOffset = (scaledMemeText.constraintWidth - textWidth) / 2f
+        CGContextTranslateCTM(
+            context,
+            (-boxWidth / 2f + scaledMemeText.textPaddingX - textCenteringOffset).toDouble(),
+            (-boxHeight / 2f + scaledMemeText.textPaddingY).toDouble(),
+        )
+
+        textNS.drawWithRect(
+            rect = CGRectMake(
+                0.0,
+                0.0,
+                scaledMemeText.constraintWidth.toDouble(),
+                textHeight.toDouble()
+            ),
+            // 1L shl 0 -> 1L
+            options = 1L shl 0,
+            attributes = attributes,
+            null
+        )
+
+        //restore the original state of the canvas
+        CGContextRestoreGState(context)
     }
 
     private fun createMemeTextAttributes(
