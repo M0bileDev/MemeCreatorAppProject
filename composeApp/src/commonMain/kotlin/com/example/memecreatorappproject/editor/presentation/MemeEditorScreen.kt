@@ -3,6 +3,7 @@ package com.example.memecreatorappproject.editor.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.adaptive.currentWindowSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -97,13 +99,24 @@ fun MemeEditorScreen(
             modifier = modifier.padding(innerPadding).fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
+            val windowSize = currentWindowSize()
             Box {
                 Image(
                     modifier =
-                        Modifier.fillMaxWidth().onSizeChanged {
+                        Modifier.then(
+                            if (windowSize.width > windowSize.height) {
+                                Modifier.fillMaxHeight()
+                            } else {
+                                Modifier.fillMaxWidth()
+                            }
+                        ).onSizeChanged {
                             onAction(MemeEditorAction.OnContainerSizeChange(it))
                         },
-                    contentScale = ContentScale.FillWidth,
+                    contentScale = if (windowSize.width > windowSize.height) {
+                        ContentScale.FillHeight
+                    } else {
+                        ContentScale.FillWidth
+                    },
                     painter = painterResource(memeTemplate.drawable),
                     contentDescription = null,
                 )
