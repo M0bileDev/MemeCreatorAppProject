@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.memecreatorappproject.core.presentation.MemeTemplate
 import com.example.memecreatorappproject.editor.domain.MemeExporter
 import com.example.memecreatorappproject.editor.domain.SaveToStorageStrategy
+import com.example.memecreatorappproject.editor.presentation.util.PlatformShareSheet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,7 +24,8 @@ const val TAG = "MemeEditorViewModel"
 
 class MemeEditorViewModel(
     private val memeExporter: MemeExporter,
-    private val storageStrategy: SaveToStorageStrategy
+    private val storageStrategy: SaveToStorageStrategy,
+    private val platformShareSheet: PlatformShareSheet
 ) : ViewModel() {
     private val _state: MutableStateFlow<MemeEditorState> = MutableStateFlow(MemeEditorState())
     val state get() = _state.asStateFlow()
@@ -91,9 +93,8 @@ class MemeEditorViewModel(
                 templateSize = state.value.templateSize,
                 saveToStorageStrategy = storageStrategy
             ).onSuccess {
-                println("$TAG: saveMeme -> onSuccess")
+                platformShareSheet.shareFile(it)
             }.onFailure {
-                println("$TAG: saveMeme -> onFailure")
                 it.printStackTrace()
             }
         }
