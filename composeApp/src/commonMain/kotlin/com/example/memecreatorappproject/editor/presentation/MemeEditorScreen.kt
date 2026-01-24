@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -152,7 +153,7 @@ fun MemeEditorScreen(
                 modifier = Modifier.align(Alignment.TopStart),
                 onClick = { onAction(MemeEditorAction.OnGoBackClick) },
             ) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowLeft, contentDescription = "Back")
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         }
     }
