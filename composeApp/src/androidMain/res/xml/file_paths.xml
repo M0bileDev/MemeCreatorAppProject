@@ -4,7 +4,7 @@
         name="meme_cache"
         path="." />
     <files-path
-        name="meme_cache"
+        name="meme_files"
         path="." />
     <external-cache-path
         name="meme_external_cache"

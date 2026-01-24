@@ -4,6 +4,7 @@ import com.example.memecreatorappproject.editor.data.CacheStorageStrategy
 import com.example.memecreatorappproject.editor.data.PlatformMemeExporter
 import com.example.memecreatorappproject.editor.domain.MemeExporter
 import com.example.memecreatorappproject.editor.domain.SaveToStorageStrategy
+import com.example.memecreatorappproject.editor.presentation.util.PlatformShareSheet
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -11,4 +12,5 @@ import org.koin.dsl.module
 actual val platformModule = module {
     factoryOf(::PlatformMemeExporter) bind MemeExporter::class
     factoryOf(::CacheStorageStrategy) bind SaveToStorageStrategy::class
+    factoryOf(::PlatformShareSheet)
 }
