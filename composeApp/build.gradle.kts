@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
-    alias(libs.plugins.compose.hot.reload)
     alias(libs.plugins.ktlint)
 }
 
@@ -31,7 +30,6 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
             implementation(libs.bundles.koin.android)
         }
         commonMain.dependencies {

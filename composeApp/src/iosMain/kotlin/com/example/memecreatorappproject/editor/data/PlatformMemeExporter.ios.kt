@@ -190,7 +190,7 @@ actual class PlatformMemeExporter : MemeExporter {
         val textNS = NSString.create(scaledMemeText.text)
         val attributes = createMemeTextAttributes(
             fontSize = scaledMemeText.scaledFontSizePx,
-            strokeWidth = scaledMemeText.scaledFontSizePx
+            strokeWidth = scaledMemeText.strokeWidth
         )
         //rectangle that surrounds the text, in height text is not limited in any way
         val boundingRect = textNS?.boundingRectWithSize(
@@ -262,7 +262,8 @@ actual class PlatformMemeExporter : MemeExporter {
             NSFontAttributeName to font,
             NSForegroundColorAttributeName to UIColor.whiteColor,
             NSStrokeColorAttributeName to UIColor.blackColor,
-            NSStrokeWidthAttributeName to NSNumber(strokeWidth),
+            //positive value saves only stroke, negative value saves stroke and fill color
+            NSStrokeWidthAttributeName to NSNumber(-strokeWidth),
             NSParagraphStyleAttributeName to paragraphStyle
         )
     }
