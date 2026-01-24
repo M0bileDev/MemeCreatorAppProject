@@ -9,6 +9,6 @@ expect val platformModule: Module
 
 val appModule =
     module {
-        viewModel { MemeEditorViewModel(get(), get()) }
+        viewModel { MemeEditorViewModel(get(), get(), get()) }
         includes(platformModule)
     }
