@@ -15,7 +15,7 @@ private const val IMAGE_JPEG = "image/jpeg"
 actual class PlatformShareSheet(
     private val context: Context
 ) {
-    actual suspend fun shareFile(filePath: String) {
+    actual fun shareFile(filePath: String) {
         val file = File(filePath)
         val uri = FileProvider.getUriForFile(
             context,
