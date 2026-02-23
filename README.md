@@ -1,35 +1,122 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# 😂 Meme Creator App
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
-
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
-
-### Build and Run Android Application
-
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
-
-### Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+A cross-platform meme creator app for **Android** and **iOS**, built with **Kotlin Multiplatform** and **Compose Multiplatform**.  
+Add captions to images, then save or share your memes directly from your device.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## 📋 Table of Contents
+
+- Features
+- Tech Stack
+- Getting Started
+- Project Structure
+- License
+
+---
+
+## 📸 Screenshots
+
+> _Add your screenshots here_
+
+---
+
+## ✨ Features
+
+- 🖊️ **Add text & captions** — Overlay custom text on any image to create your meme
+- 💾 **Save meme** — Download the finished meme directly to your device gallery
+- 📤 **Share meme** — Share your creation instantly via any app on your device
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology               | Description                              |
+|--------------------------|------------------------------------------|
+| Kotlin Multiplatform     | Shared business logic for Android & iOS  |
+| Compose Multiplatform    | Shared UI for Android & iOS              |
+| Swift                    | iOS app entry point                      |
+| Gradle (Kotlin DSL)      | Build system                             |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Android Studio](https://developer.android.com/studio) (Hedgehog or newer recommended)
+- [Xcode](https://developer.apple.com/xcode/) 15+ _(for iOS builds — macOS only)_
+- JDK 17+
+- Kotlin Multiplatform plugin installed in Android Studio
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/M0bileDev/MemeCreatorAppProject.git
+cd MemeCreatorAppProject
+```
+
+---
+
+### 🤖 Android
+
+#### Run from Android Studio
+
+Open the project in Android Studio, select the `composeApp` run configuration from the toolbar, and hit **Run**.
+
+#### Run from Terminal
+
+```bash
+# macOS / Linux
+./gradlew :composeApp:assembleDebug
+
+# Windows
+.\gradlew.bat :composeApp:assembleDebug
+```
+
+Install on a connected device or emulator:
+
+```bash
+./gradlew :composeApp:installDebug
+```
+
+---
+
+### 🍎 iOS
+
+> Requires macOS with Xcode installed.
+
+Open the `/iosApp` directory in **Xcode**:
+
+```bash
+open iosApp/iosApp.xcodeproj
+```
+
+Select your target device or simulator and press **Run** (`⌘R`).
+
+Alternatively, use the run configuration from the Android Studio toolbar if you have the Kotlin Multiplatform plugin configured.
+
+---
+
+## 📁 Project Structure
+
+```
+MemeCreatorAppProject/
+├── composeApp/
+│   └── src/
+│       ├── commonMain/         # Shared UI and business logic (KMP + Compose)
+│       ├── androidMain/        # Android-specific implementations
+│       └── iosMain/            # iOS-specific implementations
+├── iosApp/
+│   └── iosApp/                 # iOS app entry point (Swift / SwiftUI)
+├── gradle/                     # Gradle wrapper files
+├── build.gradle.kts            # Root build configuration
+├── settings.gradle.kts         # Project settings
+└── gradle.properties           # Gradle properties
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the [Apache 2.0 License](LICENSE).
